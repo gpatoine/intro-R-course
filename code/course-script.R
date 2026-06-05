@@ -200,6 +200,8 @@ seq(to = 11, 3, from = 2)
 getwd()
 version
 
+# TODO how old is your R version?
+
 
 ## Packages ----
 
@@ -220,30 +222,23 @@ mean(1:10)
   mean()
 
 
-
-
-# HERE
-
 ## Reading data ----
-library(readr)
-library(readxl) # did it work?
+# using readr
 
-read_csv
+dat <- read_csv("data/iris.csv")
 
-read_tsv
+# Click on the dataset in your environment pane.
+# - Columns summaries
+# - Sorting
+# - Filters
 
-read_xlsx
-
-
-
-
-## Wrangling with dplyr ----
-library(dplyr)
+# TODO what's the difference between the CSV and TSV file?
+# Try to read the TSV file
+iris_tsv <- ___
 
 
-## Side note: Regular Expressions
-
-library(stringr)
+## A note on Regular Expressions
+# using stringr
 
 fruits <- c("apple", "banana", "pineapple", "orange")
 
@@ -253,14 +248,42 @@ str_detect(fruits, "appl")
 str_detect(fruits, "^p")
 
 # which ones start with a vowel?
-str_detect(fruits, "^[aeiou]")
+str_starts(fruits, "[aeiou]")
 
 # TODO which ones have a vowel after a "n"
-str_detect(fruits, "___")
+____(fruits, "___")
 
 str_remove(fruits, "a")
 str_remove_all(fruits, "a")
 
+
+# Let's rename our iris columns to snake case
+names(dat)
+names(dat) <- names(dat) %>%
+  str_to_snake()
+
+
+## Wrangling with dplyr ----
+# Column selection
+dat2 <- dat %>% select(species, petal_length)
+
+# Row filter
+dat3 <- dat2 %>% filter(petal_length > 4)
+
+# Count values
+dat3 %>% count(species)
+
+# All together
+dat %>% 
+  select(species, petal_length) %>% 
+  filter(petal_length > 4) %>% 
+  count(species)
+
+
+# Let's create two more variables
+dat <- dat %>%
+  mutate(sepal_area = sepal_length * sepal_width,
+         petal_area = petal_length * petal_width)
 
 
 ## Saving data ----
