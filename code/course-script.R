@@ -193,7 +193,7 @@ seq(to = 11, 3, from = 2)
 
 
 
-# 3. A data analysis workflow -----------------------------------------------------
+# 3. A data analysis workflow ------------------------------------------
 
 ## Setup ----
 
@@ -212,6 +212,7 @@ library(tidyverse)
 
 
 # The %>% pipe
+# shortcut: ctrl+shift+m
 1:10 %>%
   mean()
 
@@ -265,13 +266,13 @@ names(dat) <- names(dat) %>%
 
 ## Wrangling with dplyr ----
 # Column selection
-dat2 <- dat %>% select(species, petal_length)
+dat_mod1 <- dat %>% select(species, petal_length)
 
 # Row filter
-dat3 <- dat2 %>% filter(petal_length > 4)
+dat_mod2 <- dat_mod1 %>% filter(petal_length > 4)
 
 # Count values
-dat3 %>% count(species)
+dat_mod2 %>% count(species)
 
 # All together
 dat %>% 
@@ -287,45 +288,54 @@ dat <- dat %>%
 
 
 ## Saving data ----
+# using R data format
+saveRDS(dat, "data/my-iris.rds")
 
-saveRDS
+saved_rds <- readRDS("data/my-iris.rds")
 
-saved_rds <- readRDS
+all.equal(dat, saved_rds)
 
-identical(dat1, saved_rds)
-
-
-write_csv
-
-csv1 <- read_csv
-
-identical(dat1, csv1)
-
-write_xl
+# using CSV
+write_csv("data/my-iris.csv")
 
 
-
-
-
-
-
+# Note: If you work with Excel, you can use the packages `readxl` and `writexl` 
 
 
 ## Figures with ggplot2 ----
-library(ggplot2)
+p <- ggplot(data = dat, aes(y = petal_area, x = sepal_area, color = species))+
+  geom_point()
+
+p + geom_smooth(method = "lm")
 
 
-# Load metabolic dataset
+# Linear model
+mod <- lm(petal_area ~ sepal_area, data = dat)
+summary(mod)
+
+mod2 <- lm(petal_area ~ sepal_area*species, data = dat)
+summary(mod2)
+anova(mod2)
+
 
 # PCA
+install.packages("ggfortify")
+library(ggfortify)
+
+pca_dat <- dat %>% select(1:4)
+
+pca_fit <- prcomp(pca_dat)
+
+p_pca <- autoplot(pca_fit, data = dat, colour = 'species')
+
 
 # Heatmap
+# We will need a package from BioConductor
+install.packages("BiocManager")
+BiocManager::install("ComplexHeatmap")
+library(ComplexHeatmap)
 
-
-
-
-
-
+Heatmap(pca_dat)
 
 
 # Bonus -------------------------------------------------------------------
